@@ -1,6 +1,22 @@
 (require 'ox-md)
 
 ;;;###autoload
+(defun create-github-readme (author project-name desc)
+  (with-temp-buffer
+    (insert (format "# %s\n%s\n" project-name desc))
+    (let (file-name)
+      (dolist (file (directory-files "./" nil ".md"))
+        (setq file-name (string-remove-suffix ".md" file))
+        (unless (string= "README" file-name)
+          (insert (format "* [%s](https://github.com/%s/%s/blob/master/%s.md) \n" file-name author project-name file-name))
+          )
+        )
+      (write-file "./README.md")
+      )
+    )
+  )
+
+;;;###autoload
 (defun org-split-into-mmd (&optional async subtreep visible-only)
   (interactive)
   (org-mode)
@@ -24,6 +40,22 @@
     )
   )
 
+;;;###autoload
+(defun org-split-with-readme (author project-name desc)
+  (org-split-into-mmd)
+  (create-github-readme author project-name desc)
+  )
+
+(defun test-create-github-readme ()
+  (with-temp-buffer
+    (write-file "./test.md")
+    (erase-buffer)
+    )
+  (create-github-readme "itsme" "test" "for testing")
+  (delete-file "test.md")
+  (delete-file "README.md")
+  )
+
 (defun test-org-split-into-mmd ()
   (with-temp-buffer
     (insert-file-contents "./test.org")
@@ -32,5 +64,7 @@
   (delete-file "./L1-1.md")
   (delete-file "./L1.md")
   )
+
+(test-create-github-readme)
 
 (provide 'my-org-tools)
