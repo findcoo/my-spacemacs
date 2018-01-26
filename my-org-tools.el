@@ -2,6 +2,7 @@
 
 ;;;###autoload
 (defun create-github-readme (author project-name desc)
+  (interactive)
   (with-temp-buffer
     (insert (format "# %s\n%s\n" project-name desc))
     (let (file-name)
@@ -42,6 +43,7 @@
 
 ;;;###autoload
 (defun org-split-with-readme (author project-name desc)
+  (interactive)
   (org-split-into-mmd)
   (create-github-readme author project-name desc)
   )
@@ -65,6 +67,5 @@
   (delete-file "./L1.md")
   )
 
-(test-create-github-readme)
 
 (provide 'my-org-tools)
