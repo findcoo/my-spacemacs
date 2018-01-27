@@ -1,11 +1,20 @@
 (require 'ox-md)
 
+(defgroup myorg nil
+  "personal org utils"
+  :prefix "myorg-"
+  :group 'editing)
+
 ;;;###autoload
-(defun create-github-readme (author project-name desc)
+(defun myorg-create-github-readme ()
   (interactive)
   (with-temp-buffer
-    (insert (format "# %s\n%s\n" project-name desc))
-    (let (file-name)
+    (let (author project-name desc file-name)
+      (setq author (read-string "repository owner:"))
+      (setq project-name (read-string "project name:"))
+      (setq desc (read-string "project description:"))
+
+      (insert (format "# %s\n%s\n" project-name desc))
       (dolist (file (directory-files "./" nil ".md"))
         (setq file-name (string-remove-suffix ".md" file))
         (unless (string= "README" file-name)
@@ -18,7 +27,7 @@
   )
 
 ;;;###autoload
-(defun org-split-into-mmd (&optional async subtreep visible-only)
+(defun myorg-split-into-mmd (&optional async subtreep visible-only)
   (interactive)
   (org-mode)
   (goto-char (point-min))
@@ -42,10 +51,10 @@
   )
 
 ;;;###autoload
-(defun org-split-with-readme (author project-name desc)
+(defun myorg-split-with-readme (author project-name desc)
   (interactive)
-  (org-split-into-mmd)
-  (create-github-readme author project-name desc)
+  (myorg-org-split-into-mmd)
+  (myorg-create-github-readme)
   )
 
 (defun test-create-github-readme ()
@@ -53,7 +62,7 @@
     (write-file "./test.md")
     (erase-buffer)
     )
-  (create-github-readme "itsme" "test" "for testing")
+  (myorg-create-github-readme)
   (delete-file "test.md")
   (delete-file "README.md")
   )
@@ -61,11 +70,11 @@
 (defun test-org-split-into-mmd ()
   (with-temp-buffer
     (insert-file-contents "./test.org")
-    (org-split-into-mmd)
+    (myorg-org-split-into-mmd)
     )
   (delete-file "./L1-1.md")
   (delete-file "./L1.md")
   )
 
-
 (provide 'my-org-tools)
+(print load-path)
